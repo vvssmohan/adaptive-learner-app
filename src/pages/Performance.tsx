@@ -19,28 +19,46 @@ const Performance = () => {
   const navigate = useNavigate();
   const [attempts, setAttempts] = useState<QuizAttempt[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    checkAuthAndFetch();
+  }, []);
+
+  const checkAuthAndFetch = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
       if (!session) {
         navigate("/auth");
-      } else {
-        fetchAttempts();
+        return;
       }
-    });
-  }, [navigate]);
+      
+      await fetchAttempts();
+    } catch (err) {
+      console.error("Auth error:", err);
+      setError("Failed to authenticate");
+      setLoading(false);
+    }
+  };
 
   const fetchAttempts = async () => {
     try {
+      setError(null);
       const { data, error } = await supabase
         .from("quiz_attempts")
         .select("*")
         .order("created_at", { ascending: false });
 
-      if (error) throw error;
+      if (error) {
+        console.error("Supabase error:", error);
+        throw error;
+      }
+      
       setAttempts(data || []);
-    } catch (error) {
-      console.error("Error fetching attempts:", error);
+    } catch (err: any) {
+      console.error("Error fetching attempts:", err);
+      setError(err.message || "Failed to load quiz history");
     } finally {
       setLoading(false);
     }
@@ -62,14 +80,34 @@ const Performance = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <p>Loading performance data...</p>
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-b from-background to-muted/20">
+        <p className="text-lg">Loading performance data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen p-6 bg-gradient-to-b from-background to-muted/20">
+        <Navigation />
+        <div className="max-w-6xl mx-auto pt-20">
+          <div className="text-center space-y-4">
+            <h1 className="text-2xl font-bold text-destructive">Error Loading Performance</h1>
+            <p className="text-muted-foreground">{error}</p>
+            <button 
+              onClick={() => window.location.reload()} 
+              className="px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-colors"
+            >
+              Retry
+            </button>
+          </div>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen p-6" style={{ background: 'linear-gradient(to bottom, hsl(220, 25%, 97%), hsl(220, 20%, 95%))' }}>
+    <div className="min-h-screen p-6 bg-gradient-to-b from-background to-muted/20">
       <Navigation />
       
       <div className="max-w-6xl mx-auto pt-20 space-y-8">
