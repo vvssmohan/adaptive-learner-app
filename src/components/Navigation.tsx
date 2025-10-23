@@ -18,23 +18,31 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 right-0 z-[100] p-4 flex items-center gap-3 bg-background/80 backdrop-blur-sm border-b border-border/40">
-      <Link to="/dashboard">
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Home className="h-4 w-4" />
-          HOME
-        </Button>
-      </Link>
-      <Link to="/performance">
-        <Button variant="ghost" size="sm" className="gap-2">
-          <Users className="h-4 w-4" />
-          PERFORMANCE
-        </Button>
-      </Link>
-      <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
-        <LogOut className="h-4 w-4" />
-        LOGOUT
-      </Button>
+    <nav className="fixed top-0 left-0 right-0 z-[100] bg-background/80 backdrop-blur-sm border-b border-border/40">
+      <div className="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Brain className="h-6 w-6 text-primary" />
+          <span className="font-bold text-lg">QuizMaster</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <Link to="/dashboard">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Home className="h-4 w-4" />
+              HOME
+            </Button>
+          </Link>
+          <Link to="/performance">
+            <Button variant="ghost" size="sm" className="gap-2">
+              <Users className="h-4 w-4" />
+              PERFORMANCE
+            </Button>
+          </Link>
+          <Button variant="ghost" size="sm" onClick={handleLogout} className="gap-2">
+            <LogOut className="h-4 w-4" />
+            LOGOUT
+          </Button>
+        </div>
+      </div>
     </nav>
   );
 };
