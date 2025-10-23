@@ -117,11 +117,18 @@ const Quiz = () => {
         });
       }
 
-      await supabase
+      const { error: updateError } = await supabase
         .from("quiz_attempts")
         .update({ score })
         .eq("id", attemptId);
 
+      if (updateError) {
+        console.error("Error updating quiz score:", updateError);
+        toast.error("Failed to save score. Please try again.");
+        return;
+      }
+
+      console.log(`Quiz completed! Score: ${score}/${questions.length}`);
       navigate("/results", { state: { attemptId, score, total: questions.length } });
     } catch (error: any) {
       console.error("Error submitting quiz:", error);
