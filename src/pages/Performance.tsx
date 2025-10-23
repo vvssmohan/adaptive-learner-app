@@ -4,7 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Navigation } from "@/components/Navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { TrendingUp, Award, BookOpen, Calendar } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
+import { TrendingUp, Award, BookOpen, Calendar, Trash2 } from "lucide-react";
+import { toast } from "sonner";
 
 interface QuizAttempt {
   id: string;
@@ -61,6 +64,36 @@ const Performance = () => {
       setError(err.message || "Failed to load quiz history");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const clearHistory = async () => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast.error("You must be logged in to clear history");
+        return;
+      }
+
+      // Delete all quiz attempts for the current user
+      // This will cascade delete related quiz_questions
+      const { error } = await supabase
+        .from("quiz_attempts")
+        .delete()
+        .eq("user_id", session.user.id);
+
+      if (error) {
+        console.error("Error clearing history:", error);
+        toast.error("Failed to clear history");
+        return;
+      }
+
+      toast.success("Performance history cleared successfully");
+      setAttempts([]);
+    } catch (err: any) {
+      console.error("Error clearing history:", err);
+      toast.error("Failed to clear history");
     }
   };
 
@@ -158,11 +191,39 @@ const Performance = () => {
 
         <Card className="shadow-lg border-0" style={{ boxShadow: 'var(--shadow-soft)' }}>
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Calendar className="h-5 w-5" />
-              Quiz History
-            </CardTitle>
-            <CardDescription>Your recent quiz attempts</CardDescription>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Calendar className="h-5 w-5" />
+                  Quiz History
+                </CardTitle>
+                <CardDescription>Your recent quiz attempts</CardDescription>
+              </div>
+              {attempts.length > 0 && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="destructive" size="sm" className="gap-2">
+                      <Trash2 className="h-4 w-4" />
+                      Clear History
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Clear Performance History?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will permanently delete all your quiz attempts and scores. This action cannot be undone.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={clearHistory} className="bg-destructive hover:bg-destructive/90">
+                        Clear History
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
+            </div>
           </CardHeader>
           <CardContent className="space-y-4">
             {attempts.length === 0 ? (
