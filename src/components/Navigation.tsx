@@ -18,7 +18,7 @@ export const Navigation = () => {
   };
 
   return (
-    <nav className="fixed top-0 right-0 z-50 p-4 flex items-center gap-3">
+    <nav className="fixed top-0 right-0 z-[100] p-4 flex items-center gap-3 bg-background/80 backdrop-blur-sm border-b border-border/40">
       <Link to="/dashboard">
         <Button variant="ghost" size="sm" className="gap-2">
           <Home className="h-4 w-4" />
