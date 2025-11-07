@@ -47,6 +47,12 @@ All colors MUST be HSL.
     --shadow-glow: 0 0 40px hsl(188 90% 42% / 0.25);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+    --chart-1: 142 76% 36%;
+    --chart-2: 346 77% 50%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 
   .dark {
@@ -77,6 +83,12 @@ All colors MUST be HSL.
     --border: 220 20% 18%;
     --input: 220 20% 18%;
     --ring: 188 90% 42%;
+
+    --chart-1: 142 76% 36%;
+    --chart-2: 346 77% 50%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
   }
 }
 
