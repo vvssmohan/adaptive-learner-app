@@ -7,7 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { CheckCircle2, XCircle, Trophy, TrendingUp } from "lucide-react";
 import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
-import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Legend } from "recharts";
+import { PieChart, Pie, Cell } from "recharts";
 
 interface QuizQuestion {
   question_text: string;
@@ -59,9 +59,6 @@ const Results = () => {
     { name: "Incorrect", value: incorrect, fill: "hsl(var(--chart-2))" },
   ];
 
-  const barChartData = [
-    { category: "Answers", correct: score, incorrect: incorrect },
-  ];
 
   const chartConfig = {
     correct: {
@@ -133,54 +130,32 @@ const Results = () => {
           </Button>
         </div>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <Card className="shadow-md border-0" style={{ boxShadow: 'var(--shadow-soft)' }}>
-            <CardHeader>
-              <CardTitle>Answer Distribution</CardTitle>
-              <CardDescription>Pie chart showing correct vs incorrect answers</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[250px]">
-                <PieChart>
-                  <Pie
-                    data={chartData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    label={({ name, value }) => `${name}: ${value}`}
-                    outerRadius={80}
-                    dataKey="value"
-                  >
-                    {chartData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.fill} />
-                    ))}
-                  </Pie>
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                </PieChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          <Card className="shadow-md border-0" style={{ boxShadow: 'var(--shadow-soft)' }}>
-            <CardHeader>
-              <CardTitle>Performance Overview</CardTitle>
-              <CardDescription>Bar chart comparing correct and incorrect answers</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer config={chartConfig} className="h-[250px]">
-                <BarChart data={barChartData}>
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="category" />
-                  <YAxis />
-                  <ChartTooltip content={<ChartTooltipContent />} />
-                  <Legend />
-                  <Bar dataKey="correct" fill="hsl(var(--chart-1))" name="Correct" radius={[8, 8, 0, 0]} />
-                  <Bar dataKey="incorrect" fill="hsl(var(--chart-2))" name="Incorrect" radius={[8, 8, 0, 0]} />
-                </BarChart>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
+        <Card className="shadow-md border-0 max-w-2xl mx-auto" style={{ boxShadow: 'var(--shadow-soft)' }}>
+          <CardHeader>
+            <CardTitle>Answer Distribution</CardTitle>
+            <CardDescription>Pie chart showing correct vs incorrect answers</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ChartContainer config={chartConfig} className="h-[300px]">
+              <PieChart>
+                <Pie
+                  data={chartData}
+                  cx="50%"
+                  cy="50%"
+                  labelLine={false}
+                  label={({ name, value }) => `${name}: ${value}`}
+                  outerRadius={100}
+                  dataKey="value"
+                >
+                  {chartData.map((entry, index) => (
+                    <Cell key={`cell-${index}`} fill={entry.fill} />
+                  ))}
+                </Pie>
+                <ChartTooltip content={<ChartTooltipContent />} />
+              </PieChart>
+            </ChartContainer>
+          </CardContent>
+        </Card>
 
         <div className="space-y-4">
           <h2 className="text-2xl font-bold">Review Your Answers</h2>
